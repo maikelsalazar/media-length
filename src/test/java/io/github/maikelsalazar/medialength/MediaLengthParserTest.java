@@ -61,6 +61,86 @@ class MediaLengthParserTest {
     }
 
     @ParameterizedTest
+    @CsvSource({
+            "0:00, 0, 0",
+            "1:10, 1, 10",
+            "00:00, 0, 0",
+            "02:30, 2, 30",
+            "59:59, 59, 59",
+            "90:59, 90, 59",
+            "100:10, 100, 10",
+            "153722867280912930:00, 153722867280912930, 0",
+            "153722867280912930:07, 153722867280912930, 7",
+            "153722867280912929:59, 153722867280912929, 59"
+    })
+    void shouldParseMinutesAndSeconds(
+            String lengthToParse,
+            long expectedMinutes,
+            long expectedSeconds
+    ) {
+        Duration expected = Duration
+                .ofMinutes(expectedMinutes)
+                .plusSeconds(expectedSeconds);
+
+        assertEquals(expected, MediaLengthParser.parse(lengthToParse));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "000:00",
+            "009:00",
+            "010:00",
+            "0000:00",
+            "0010:00",
+
+            "-0:00",
+            "+0:10",
+            "0:-05",
+            "0:+10",
+
+            " 0:00",
+            "0:00 ",
+            " 00:00 ",
+
+            "abc:00",
+            "1.5:00",
+            "1,5:00",
+            "1a:00",
+
+            ":",
+            ":00",
+            "1:",
+            "1::",
+
+            "1:0",
+            "1:000",
+            "1:001",
+
+            "0:60",
+            "0:99",
+            "10:60"
+    })
+    void shouldRejectInvalidMinutesAndSeconds(String lengthToParse) {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> MediaLengthParser.parse(lengthToParse)
+        );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "153722867280912930:08",
+            "153722867280912930:59",
+            "153722867280912931:00"
+    })
+    void shouldRejectMinutesAndSecondsOnOverflow(String lengthToParse) {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> MediaLengthParser.parse(lengthToParse)
+        );
+    }
+
+    @ParameterizedTest
     @ValueSource(strings = {
             "abc",
             "1.5",
