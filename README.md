@@ -16,7 +16,7 @@ A **media length** is a non-negative duration represented in one of the followin
 
 ## Requirements
 
-- Java 21 or later
+- Java 17 or later
 - Maven 3.9 or later, or the included Maven Wrapper
 
 ## Installation
