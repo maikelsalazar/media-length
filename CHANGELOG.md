@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-08-21
+
 ### Added
 
 - Support for parsing media lengths in `S+`, `M+:SS`, and `H+:MM:SS` formats.
@@ -14,3 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Specific exceptions for parsing and formatting failures.
 - Compatibility with Java 17 and later.
 - Continuous integration testing on Java 17, 21, and 25.
+
+[Unreleased]: https://github.com/maikelsalazar/media-length/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/maikelsalazar/media-length/releases/tag/v0.1.0
