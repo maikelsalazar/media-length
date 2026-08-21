@@ -42,9 +42,18 @@ final class MediaLengthParser {
         String[] components = lengthToParse.split(":", -1);
         return switch (components.length) {
             case 1 -> parseSeconds(components[0]);
-            case 2 -> parseMinutesAndSeconds(components[0], components[1]);
-            case 3 -> parseHoursAndMinutesAndSeconds(components[0], components[1], components[2]);
-            default -> throw new MediaLengthParseException("Invalid length: " + lengthToParse);
+            case 2 -> parseMinutesAndSeconds(
+                    components[0],
+                    components[1]
+            );
+            case 3 -> parseHoursAndMinutesAndSeconds(
+                    components[0],
+                    components[1],
+                    components[2]
+            );
+            default -> throw new MediaLengthParseException(
+                    "Invalid length: " + lengthToParse
+            );
         };
     }
 
@@ -69,8 +78,11 @@ final class MediaLengthParser {
             return Duration
                     .ofMinutes(minutes)
                     .plusSeconds(seconds);
-        } catch (ArithmeticException e) {
-            throw new MediaLengthParseException("minutes and seconds exceed the supported range", e);
+        } catch (ArithmeticException exception) {
+            throw MediaLengthParseException.supportedRangeExceeded(
+                    "minutes and seconds",
+                    exception
+            );
         }
     }
 
@@ -96,8 +108,11 @@ final class MediaLengthParser {
                     .ofHours(hours)
                     .plusMinutes(minutes)
                     .plusSeconds(seconds);
-        } catch (ArithmeticException e) {
-            throw new MediaLengthParseException("hours, minutes and seconds exceed the supported range", e);
+        } catch (ArithmeticException exception) {
+            throw MediaLengthParseException.supportedRangeExceeded(
+                    "hours, minutes and seconds",
+                    exception
+            );
         }
     }
 
@@ -106,21 +121,30 @@ final class MediaLengthParser {
             String componentName
     ) {
         if (component.isBlank()) {
-            throw new MediaLengthParseException(componentName + " cannot be empty or blank");
+            throw new MediaLengthParseException(
+                    componentName + " cannot be empty or blank"
+            );
         }
 
         if (!component.chars().allMatch(c -> c >= '0' && c <= '9')) {
-            throw new MediaLengthParseException(componentName + " contains invalid characters");
+            throw new MediaLengthParseException(
+                    componentName + " contains invalid characters"
+            );
         }
 
         if (component.length() > 2 && component.charAt(0) == '0') {
-            throw new MediaLengthParseException(componentName + " contains leading zeroes");
+            throw new MediaLengthParseException(
+                    componentName + " contains leading zeroes"
+            );
         }
 
         try {
             return Long.parseLong(component);
-        } catch (NumberFormatException e) {
-            throw new MediaLengthParseException(componentName + " exceeds the supported range", e);
+        } catch (NumberFormatException exception) {
+            throw MediaLengthParseException.supportedRangeExceeded(
+                    componentName,
+                    exception
+            );
         }
     }
 
@@ -132,11 +156,15 @@ final class MediaLengthParser {
         long value = parseComponent(component, componentName);
 
         if (component.length() != 2) {
-            throw new MediaLengthParseException(componentName + " must have exactly two digits");
+            throw new MediaLengthParseException(
+                    componentName + " must have exactly two digits"
+            );
         }
 
         if (value > max) {
-            throw new MediaLengthParseException(componentName + " must be between 0 and " + max);
+            throw new MediaLengthParseException(
+                    componentName + " must be between 0 and " + max
+            );
         }
 
         return value;
