@@ -1,6 +1,7 @@
 package io.github.maikelsalazar.medialength;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
@@ -31,6 +32,22 @@ class MediaLengthTest {
         assertEquals(
                 "1:20:30",
                 MediaLength.format(duration)
+        );
+    }
+
+    @Test
+    void shouldThrowMediaLengthExceptionWhenParsingFails() {
+        assertThrows(
+                MediaLengthException.class,
+                () -> MediaLength.parse("invalid")
+        );
+    }
+
+    @Test
+    void shouldThrowMediaLengthExceptionWhenFormattingFails() {
+        assertThrows(
+                MediaLengthException.class,
+                () -> MediaLength.format(Duration.ofSeconds(-1))
         );
     }
 }
