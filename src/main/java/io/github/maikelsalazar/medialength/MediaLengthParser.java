@@ -4,6 +4,8 @@ import java.time.Duration;
 
 class MediaLengthParser {
 
+    private static final int MAX_MINUTES_OR_SECONDS = 59;
+
     private MediaLengthParser() {
     }
 
@@ -14,11 +16,13 @@ class MediaLengthParser {
      * <ul>
      *     <li>{@code S+}: seconds, for example {@code "10"}</li>
      *     <li>{@code M+:SS}: minutes and seconds, for example {@code "1:10"}</li>
+     *     <li>{@code H+:MM:SS}: hours, minutes and seconds,
+     *         for example {@code "1:20:30"}</li>
      * </ul>
      *
      * <p>Variable-length components may contain one or two digits with
      * leading zeroes, but values with three or more digits must not begin
-     * with zero. The seconds component in {@code M+:SS} must contain
+     * with zero. Fixed-width minute and second components must contain
      * exactly two digits between {@code 00} and {@code 59}.
      *
      * @param lengthToParse string to parse
@@ -36,6 +40,7 @@ class MediaLengthParser {
         return switch (components.length) {
             case 1 -> parseSeconds(components[0]);
             case 2 -> parseMinutesAndSeconds(components[0], components[1]);
+            case 3 -> parseHoursAndMinutesAndSeconds(components[0], components[1], components[2]);
             default -> throw new IllegalArgumentException("Invalid length: " + lengthToParse);
         };
     }
@@ -51,7 +56,11 @@ class MediaLengthParser {
             String secondsToParse
     ) {
         long minutes = parseComponent(minutesToParse, "minutes");
-        long seconds = parseExactlyTwoDigitComponentWithMax(secondsToParse, "seconds", 59);
+        long seconds = parseExactlyTwoDigitComponentWithMax(
+                secondsToParse,
+                "seconds",
+                MAX_MINUTES_OR_SECONDS
+        );
 
         try {
             return Duration
@@ -59,6 +68,33 @@ class MediaLengthParser {
                     .plusSeconds(seconds);
         } catch (ArithmeticException e) {
             throw new IllegalArgumentException("minutes and seconds exceed the supported range", e);
+        }
+    }
+
+    private static Duration parseHoursAndMinutesAndSeconds(
+            String hoursToParse,
+            String minutesToParse,
+            String secondsToParse
+    ) {
+        long hours = parseComponent(hoursToParse, "hours");
+        long minutes = parseExactlyTwoDigitComponentWithMax(
+                minutesToParse,
+                "minutes",
+                MAX_MINUTES_OR_SECONDS
+        );
+        long seconds = parseExactlyTwoDigitComponentWithMax(
+                secondsToParse,
+                "seconds",
+                MAX_MINUTES_OR_SECONDS
+        );
+
+        try {
+            return Duration
+                    .ofHours(hours)
+                    .plusMinutes(minutes)
+                    .plusSeconds(seconds);
+        } catch (ArithmeticException e) {
+            throw new IllegalArgumentException("hours, minutes and seconds exceed the supported range", e);
         }
     }
 
