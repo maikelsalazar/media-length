@@ -9,7 +9,7 @@
 
     <groupId>io.github.maikelsalazar</groupId>
     <artifactId>media-length</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
     <name>Media Length</name>
     <description>
         A Java library for parsing and formatting media lengths using java.time.Duration.
