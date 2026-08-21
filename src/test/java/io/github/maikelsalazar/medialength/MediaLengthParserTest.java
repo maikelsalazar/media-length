@@ -1,5 +1,8 @@
 package io.github.maikelsalazar.medialength;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -7,9 +10,6 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.Duration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MediaLengthParserTest {
 
@@ -134,6 +134,129 @@ class MediaLengthParserTest {
             "153722867280912931:00"
     })
     void shouldRejectMinutesAndSecondsOnOverflow(String lengthToParse) {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> MediaLengthParser.parse(lengthToParse)
+        );
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "0:00:00, 0, 0, 0",
+            "0:01:10, 0, 1, 10",
+            "0:59:59, 0, 59, 59",
+
+            "00:00:00, 0, 0, 0",
+            "00:02:30, 0, 2, 30",
+            "99:59:59, 99, 59, 59",
+
+            "100:10:59, 100, 10, 59",
+
+            "2562047788015215:30:07, 2562047788015215, 30, 7"
+    })
+    void shouldParseHoursAndMinutesAndSeconds(
+            String lengthToParse,
+            long expectedHours,
+            long expectedMinutes,
+            long expectedSeconds
+    ) {
+        Duration expected = Duration
+                .ofHours(expectedHours)
+                .plusMinutes(expectedMinutes)
+                .plusSeconds(expectedSeconds);
+
+        assertEquals(expected, MediaLengthParser.parse(lengthToParse));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            // invalid operators
+            "-0:00:00",
+            "+0:00:10",
+            "0:00:-05",
+            "0:00:+10",
+            "0:-00:00",
+            "0:+00:10",
+
+            // trailing or leading spaces
+            " 0:0:00",
+            "0:00:00 ",
+            " 00:00:00 ",
+            "0:00 :00",
+            "0: 00:00 ",
+            "00:00:00 ",
+            "00:00: 00",
+
+            // invalid characters
+            "01:abc:00",
+            "01:1.5:00",
+            "01:1,5:00",
+            "01:1a:00",
+            "02:00:abc",
+            "03:00:1.5",
+            "04:10:1,5",
+            "04:20:1a",
+            "abc:00:00",
+            "1.5:00:00",
+            "1,5:00:00",
+            "1a:00:00",
+
+            // empty components
+            "::",
+            "::00",
+            ":1:",
+            ":1::",
+            ":00:00",
+            "0::00",
+            "0:00:",
+
+            // malformed
+            "0:1:0",
+            "1:1:000",
+            "2:1:001",
+            "0:1:00",
+            "0:001:00",
+            "1:100:00",
+            "2:101:00",
+
+            // leading zeros
+            "000:10:50",
+            "010:05:15",
+
+            // out of bounds
+            "0:00:60",
+            "10:00:99",
+            "20:10:60",
+            "0:60:00",
+            "01:99:00",
+            "10:60:00"
+    })
+    void shouldRejectInvalidHoursAndMinutesAndSeconds(String lengthToParse) {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> MediaLengthParser.parse(lengthToParse)
+        );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "2562047788015215:30:08",
+            "2562047788015215:30:59",
+            "2562047788015216:00:00"
+    })
+    void shouldRejectHoursAndMinutesAndSecondsOnOverflow(String lengthToParse) {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> MediaLengthParser.parse(lengthToParse)
+        );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "0:00:00:00",
+            "1:02:03:04"
+    })
+    void shouldRejectInvalidNumberOfComponents(String lengthToParse) {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> MediaLengthParser.parse(lengthToParse)
