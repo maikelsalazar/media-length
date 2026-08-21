@@ -51,7 +51,7 @@ public final class MediaLength {
      *
      * @param duration duration to format
      * @return the formatted media length, never {@code null}
-     * @throws IllegalArgumentException if {@code duration} is
+     * @throws MediaLengthFormatException if {@code duration} is
      *                                  {@code null} or negative
      */
     public static String format(Duration duration) {

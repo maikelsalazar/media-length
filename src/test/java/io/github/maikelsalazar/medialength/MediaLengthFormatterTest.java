@@ -67,7 +67,7 @@ class MediaLengthFormatterTest {
     @Test
     void shouldRejectNullDuration() {
         assertThrows(
-                IllegalArgumentException.class,
+                MediaLengthFormatException.class,
                 () -> MediaLengthFormatter.format(null)
         );
     }
@@ -75,7 +75,7 @@ class MediaLengthFormatterTest {
     @Test
     void shouldRejectNegativeDuration() {
         assertThrows(
-                IllegalArgumentException.class,
+                MediaLengthFormatException.class,
                 () -> MediaLengthFormatter.format(Duration.ofSeconds(-1))
         );
     }

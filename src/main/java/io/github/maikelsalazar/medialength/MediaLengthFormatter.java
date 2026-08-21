@@ -23,16 +23,16 @@ final class MediaLengthFormatter {
      *
      * @param duration duration to format
      * @return the formatted media length
-     * @throws IllegalArgumentException if {@code duration} is
+     * @throws MediaLengthFormatException if {@code duration} is
      *                                  {@code null} or negative
      */
     static String format(Duration duration) {
         if (duration == null) {
-            throw new IllegalArgumentException("duration is null");
+            throw new MediaLengthFormatException("duration is null");
         }
 
         if (duration.isNegative()) {
-            throw new IllegalArgumentException(
+            throw new MediaLengthFormatException(
                     "duration cannot be negative"
             );
         }
