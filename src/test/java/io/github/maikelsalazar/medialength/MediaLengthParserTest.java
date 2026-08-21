@@ -49,14 +49,14 @@ class MediaLengthParserTest {
     })
     void shouldRejectInvalidSeconds(String lengthToParse) {
         assertThrows(
-                IllegalArgumentException.class,
+                MediaLengthParseException.class,
                 () -> MediaLengthParser.parse(lengthToParse));
     }
 
     @Test
     void shouldRejectSecondsOnOverflow() {
         assertThrows(
-                IllegalArgumentException.class,
+                MediaLengthParseException.class,
                 () -> MediaLengthParser.parse("9223372036854775808"));
     }
 
@@ -122,7 +122,7 @@ class MediaLengthParserTest {
     })
     void shouldRejectInvalidMinutesAndSeconds(String lengthToParse) {
         assertThrows(
-                IllegalArgumentException.class,
+                MediaLengthParseException.class,
                 () -> MediaLengthParser.parse(lengthToParse)
         );
     }
@@ -135,7 +135,7 @@ class MediaLengthParserTest {
     })
     void shouldRejectMinutesAndSecondsOnOverflow(String lengthToParse) {
         assertThrows(
-                IllegalArgumentException.class,
+                MediaLengthParseException.class,
                 () -> MediaLengthParser.parse(lengthToParse)
         );
     }
@@ -233,7 +233,7 @@ class MediaLengthParserTest {
     })
     void shouldRejectInvalidHoursAndMinutesAndSeconds(String lengthToParse) {
         assertThrows(
-                IllegalArgumentException.class,
+                MediaLengthParseException.class,
                 () -> MediaLengthParser.parse(lengthToParse)
         );
     }
@@ -246,7 +246,7 @@ class MediaLengthParserTest {
     })
     void shouldRejectHoursAndMinutesAndSecondsOnOverflow(String lengthToParse) {
         assertThrows(
-                IllegalArgumentException.class,
+                MediaLengthParseException.class,
                 () -> MediaLengthParser.parse(lengthToParse)
         );
     }
@@ -258,7 +258,7 @@ class MediaLengthParserTest {
     })
     void shouldRejectInvalidNumberOfComponents(String lengthToParse) {
         assertThrows(
-                IllegalArgumentException.class,
+                MediaLengthParseException.class,
                 () -> MediaLengthParser.parse(lengthToParse)
         );
     }
@@ -274,7 +274,7 @@ class MediaLengthParserTest {
     })
     void shouldRejectInvalidFormat(String lengthToParse) {
         assertThrows(
-                IllegalArgumentException.class,
+                MediaLengthParseException.class,
                 () -> MediaLengthParser.parse(lengthToParse));
     }
 
@@ -283,7 +283,7 @@ class MediaLengthParserTest {
     @ValueSource(strings = {" ", "    "})
     void shouldRejectEmptyOrBlankInput(String input) {
         assertThrows(
-                IllegalArgumentException.class,
+                MediaLengthParseException.class,
                 () -> MediaLengthParser.parse(input)
         );
     }

@@ -30,13 +30,13 @@ final class MediaLengthParser {
      *
      * @param lengthToParse string to parse
      * @return the parsed duration, never {@code null}
-     * @throws IllegalArgumentException if the input is {@code null},
+     * @throws MediaLengthParseException if the input is {@code null},
      *                                  has an invalid format or exceeds
      *                                  the supported range
      */
     static Duration parse(String lengthToParse) {
         if (lengthToParse == null) {
-            throw new IllegalArgumentException("lengthToParse is null");
+            throw new MediaLengthParseException("lengthToParse is null");
         }
 
         String[] components = lengthToParse.split(":", -1);
@@ -44,7 +44,7 @@ final class MediaLengthParser {
             case 1 -> parseSeconds(components[0]);
             case 2 -> parseMinutesAndSeconds(components[0], components[1]);
             case 3 -> parseHoursAndMinutesAndSeconds(components[0], components[1], components[2]);
-            default -> throw new IllegalArgumentException("Invalid length: " + lengthToParse);
+            default -> throw new MediaLengthParseException("Invalid length: " + lengthToParse);
         };
     }
 
@@ -70,7 +70,7 @@ final class MediaLengthParser {
                     .ofMinutes(minutes)
                     .plusSeconds(seconds);
         } catch (ArithmeticException e) {
-            throw new IllegalArgumentException("minutes and seconds exceed the supported range", e);
+            throw new MediaLengthParseException("minutes and seconds exceed the supported range", e);
         }
     }
 
@@ -97,7 +97,7 @@ final class MediaLengthParser {
                     .plusMinutes(minutes)
                     .plusSeconds(seconds);
         } catch (ArithmeticException e) {
-            throw new IllegalArgumentException("hours, minutes and seconds exceed the supported range", e);
+            throw new MediaLengthParseException("hours, minutes and seconds exceed the supported range", e);
         }
     }
 
@@ -106,21 +106,21 @@ final class MediaLengthParser {
             String componentName
     ) {
         if (component.isBlank()) {
-            throw new IllegalArgumentException(componentName + " cannot be empty or blank");
+            throw new MediaLengthParseException(componentName + " cannot be empty or blank");
         }
 
         if (!component.chars().allMatch(c -> c >= '0' && c <= '9')) {
-            throw new IllegalArgumentException(componentName + " contains invalid characters");
+            throw new MediaLengthParseException(componentName + " contains invalid characters");
         }
 
         if (component.length() > 2 && component.charAt(0) == '0') {
-            throw new IllegalArgumentException(componentName + " contains leading zeroes");
+            throw new MediaLengthParseException(componentName + " contains leading zeroes");
         }
 
         try {
             return Long.parseLong(component);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(componentName + " exceeds the supported range", e);
+            throw new MediaLengthParseException(componentName + " exceeds the supported range", e);
         }
     }
 
@@ -132,11 +132,11 @@ final class MediaLengthParser {
         long value = parseComponent(component, componentName);
 
         if (component.length() != 2) {
-            throw new IllegalArgumentException(componentName + " must have exactly two digits");
+            throw new MediaLengthParseException(componentName + " must have exactly two digits");
         }
 
         if (value > max) {
-            throw new IllegalArgumentException(componentName + " must be between 0 and " + max);
+            throw new MediaLengthParseException(componentName + " must be between 0 and " + max);
         }
 
         return value;

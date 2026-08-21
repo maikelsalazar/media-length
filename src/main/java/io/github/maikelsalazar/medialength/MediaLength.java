@@ -29,7 +29,7 @@ public final class MediaLength {
      *
      * @param mediaLength media length to parse
      * @return the parsed duration, never {@code null}
-     * @throws IllegalArgumentException if {@code mediaLength} is
+     * @throws MediaLengthParseException if {@code mediaLength} is
      *                                  {@code null}, has an invalid format
      *                                  or exceeds the supported range
      */
