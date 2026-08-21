@@ -2,7 +2,10 @@ package io.github.maikelsalazar.medialength;
 
 import java.time.Duration;
 
-class MediaLengthParser {
+/**
+ * Parses supported media-length strings into durations.
+ */
+final class MediaLengthParser {
 
     private static final int MAX_MINUTES_OR_SECONDS = 59;
 
@@ -31,7 +34,7 @@ class MediaLengthParser {
      *                                  has an invalid format or exceeds
      *                                  the supported range
      */
-    public static Duration parse(String lengthToParse) {
+    static Duration parse(String lengthToParse) {
         if (lengthToParse == null) {
             throw new IllegalArgumentException("lengthToParse is null");
         }
